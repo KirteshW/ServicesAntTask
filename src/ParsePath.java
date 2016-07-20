@@ -21,7 +21,6 @@ public class ParsePath extends Task{
 		this.order = order;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void execute(){
 		String[] paths = path.split(delimiter);
 		
@@ -30,7 +29,18 @@ public class ParsePath extends Task{
 		}else{
 			Arrays.sort(paths,Collections.reverseOrder());
 		}
-		project.setProperty(property,String.join(delimiter, paths));
+		this.getProject().setProperty(property,doJoin(paths, delimiter));
+	}
+	private String doJoin(String[] paths, String delimiter) {
+		StringBuilder retStr = new StringBuilder();
+		if(paths.length>0){
+			for(String str:paths){
+				retStr.append(delimiter).append(str);
+			}
+			return retStr.toString().substring(delimiter.length());
+		}else{
+			return "";
+		}
 	}
 
 }

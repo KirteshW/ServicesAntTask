@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 public class TableDiff extends Task {
 	String server;
@@ -40,7 +41,7 @@ public class TableDiff extends Task {
 		this.password = password;}
 	public void setProperty(String property) {
 		this.property = property;}
-    @SuppressWarnings("deprecation")
+	private Project myProject = this.getProject();
 	public void execute() {
        try{
     	   DBCon dbcon = new DBCon(server, port, user, password);
@@ -51,14 +52,14 @@ public class TableDiff extends Task {
     	   String tempcols="";
     	   for(String x:tables)
     	   {
-    		   tbl+=project.getProperty(x)+",";
+    		   tbl+=myProject.getProperty(x)+",";
     	   }
     	   tbl = tbl.substring(0,tbl.length()-1);
     	   String tmptables = "(SELECT '" + tbl.replace(",","'  AS a UNION SELECT '") + "' AS a) AS aa";
     	   //log("SELECT DISTINCT(a) FROM" + tmptables);
 
     	   ResultSet rrs = dbcon.getRecords("SELECT DISTINCT(a) FROM" + tmptables);
-    	   log("Prepairing File" + project.getProperty("basedir")+ "/TableDiff_"+ project.getProperty("currentdb") +".htm");
+    	   log("Prepairing File" + myProject.getProperty("basedir")+ "/TableDiff_"+ myProject.getProperty("currentdb") +".htm");
     	   while(rrs.next())
     	   {
     		  try{
@@ -113,15 +114,15 @@ public class TableDiff extends Task {
     	  // project.setProperty(property, htmlout.toString()); 
     	   if(createhtml.toLowerCase().equals("true"))
     	   {
-	    	   File file = new File(project.getProperty("basedir")+ "/RESULTS/TableDiff_"+ project.getProperty("currentdb") +".html");
+	    	   File file = new File(myProject.getProperty("basedir")+ "/RESULTS/TableDiff_"+ myProject.getProperty("currentdb") +".html");
 	    	   BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-	    	  htmlout.insert(0,"<html><head><style>th{background-color:#1096D6;color:#fff;font-family:'Calibri','sans-serif';font-size:16px;}th,td{border:solid 1px #000;font-family:'Calibri','sans-serif';font-size:14px;padding:2px;}h1{font-family:'Calibri','sans-serif';font-size:22px;line-height:25px;text-align:center}.note{font-family:'Calibri','sans-serif';font-size:9px;line-height:12px;font-weight:small;}.Fail{background-color:#FDE4E4}</style></header><body><h1>Services Automation Result for Database <u>"+ project.getProperty("currentdb")+"</u></h1><table><tr><th>Run By</th><td>"+project.getProperty("user.name")+"</td></tr><tr><th>Database</th><td>"+project.getProperty("DBLIST")+"</td></tr><tr><th>Run For Properties</th><td>"+project.getProperty("PROPERTYLIST")+"</td></tr><tr><th>Run For Services</th><td>"+project.getProperty("SERVICELIST")+"</td></tr><tr><th>Run on Computer</th><td>"+project.getProperty("env.COMPUTERNAME")+"</td></tr></table><hr/><h1>Table Differences</h1>");
+	    	  htmlout.insert(0,"<html><head><style>th{background-color:#1096D6;color:#fff;font-family:'Calibri','sans-serif';font-size:16px;}th,td{border:solid 1px #000;font-family:'Calibri','sans-serif';font-size:14px;padding:2px;}h1{font-family:'Calibri','sans-serif';font-size:22px;line-height:25px;text-align:center}.note{font-family:'Calibri','sans-serif';font-size:9px;line-height:12px;font-weight:small;}.Fail{background-color:#FDE4E4}</style></header><body><h1>Services Automation Result for Database <u>"+ myProject.getProperty("currentdb")+"</u></h1><table><tr><th>Run By</th><td>"+myProject.getProperty("user.name")+"</td></tr><tr><th>Database</th><td>"+myProject.getProperty("DBLIST")+"</td></tr><tr><th>Run For Properties</th><td>"+myProject.getProperty("PROPERTYLIST")+"</td></tr><tr><th>Run For Services</th><td>"+myProject.getProperty("SERVICELIST")+"</td></tr><tr><th>Run on Computer</th><td>"+myProject.getProperty("env.COMPUTERNAME")+"</td></tr></table><hr/><h1>Table Differences</h1>");
 	    	  htmlout.append("</body></html>");
 	    	  writer.write(htmlout.toString());
 	    	   writer.close();
     	   }
     	   else
-    		   project.setProperty(property, htmlout.toString()); 
+    		   myProject.setProperty(property, htmlout.toString()); 
     	   dbcon.dropConnection();
        } 
        catch(Exception e)

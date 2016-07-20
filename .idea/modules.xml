@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ServicesAntTask.iml" filepath="$PROJECT_DIR$/ServicesAntTask.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AntTaskForDBDiff.iml" filepath="$PROJECT_DIR$/AntTaskForDBDiff.iml" />
     </modules>
   </component>
 </project>
